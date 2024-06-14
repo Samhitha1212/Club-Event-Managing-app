@@ -1,20 +1,20 @@
 const express=require('express')
 const app=express()
 const cors=require('cors')
+const EventRoutes=require('./Routes/EventRoutes.js')
 
-const {connectToDb,getDb} =require('./db')
+const {connect} =require('./db.js')
 
 app.use(cors())
 app.use(express.json())
+app.use("/api/event",EventRoutes)
+connect()
 
-connectToDb(()=>{
-  console.log("connection establised")
+
+app.get('/',(req,res)=>{
+  res.send("this is home page")
 })
 
-
-app.post('/',(req,res)=>{
-  console.log(req.body)
-})
 
 app.listen(3000,()=>{
   console.log('listening to port 3000')
