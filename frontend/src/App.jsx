@@ -2,7 +2,7 @@ import Home from './Components/Home/Home.jsx'
 import Navbar from './Components/Navbar/Navbar.jsx'
 import Footer from './Components/Footer/Footer.jsx'
 import Login from './Components/Auth/Login.jsx'
-import { Route,Routes } from 'react-router-dom'
+import { Navigate, Route,Routes } from 'react-router-dom'
 import Signup from './Components/Auth/Signup.jsx'
 import AddEvent from './Components/Admin/AddEvent.jsx'
 import Sidebar from './Components/Navbar/Sidebar.jsx'
@@ -19,6 +19,7 @@ import UpdateProfile from './Components/Profile/UpdateProfile.jsx'
 function App() {
   
 
+const user=useSelector(selectUser)
 const dispatch=useDispatch();
 
 useEffect(()=>{
@@ -33,14 +34,28 @@ useEffect(()=>{
         phoneNumber:authUser.phoneNumber,
 
       }))
+      localStorage.setItem("user",JSON.stringify({
+        uid:authUser.uid,
+        photo:authUser.photoURL,
+        name:authUser.displayName,
+        email:authUser.email,
+        phoneNumber:authUser.phoneNumber,
+
+      }))
     }
     else{
       dispatch(logout())
     }
   })
-
-
 },[dispatch])
+
+
+
+
+
+const RequireAuth=({children})=>{
+  return user?children: <Navigate to="/login" />
+}
 
   return (
     <>
@@ -50,9 +65,9 @@ useEffect(()=>{
       <Route path='/' element={<Home/>} />
       <Route path='/login' element={<Login/>} />
       <Route path='/signup' element={<Signup/>} />
-      <Route path='/addevent' element={<AddEvent/>} />
-      <Route path='/profile' element={<Profile/>}/>
-      <Route path='/updateprofile' element={<UpdateProfile/>}/>
+      <Route path='/addevent' element={<RequireAuth><AddEvent/></RequireAuth>} />
+      <Route path='/profile' element={<RequireAuth><Profile/></RequireAuth>}/>
+      <Route path='/updateprofile' element={<RequireAuth><UpdateProfile/></RequireAuth>}/>
 
      </Routes>
 
